@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+/openmp/oracle-drace1/build/
+/openmp/oracle-drace1/dist/
+/openmp/oracle-deadlock/dist/
+/openmp/oracle-deadlock/build/
+/openmp/oracle-datarace-sv/build/
+/openmp/oracle-datarace-sv/dist/

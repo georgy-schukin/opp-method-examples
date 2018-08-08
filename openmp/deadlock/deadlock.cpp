@@ -1,43 +1,54 @@
 #include <omp.h>
-#include <stdio.h>
+#include <queue>
+#include <iostream>
 
 int main() {
-    int a = 0;
+    omp_lock_t queue_lock, io_lock;
 
-    omp_lock_t lock1, lock2;
+    omp_init_lock(&queue_lock);
+    omp_init_lock(&io_lock);
 
-    omp_init_lock(&lock1);
-    omp_init_lock(&lock2);
+    std::queue<int> queue;
 
-#pragma omp parallel sections shared(a)
+#pragma omp parallel sections shared(queue)
 {
     #pragma omp section 
     {
-        omp_set_lock(&lock1);
-        omp_set_lock(&lock2);
+        for (int i = 0; i < 10; i++) {
+            omp_set_lock(&queue_lock);
+            omp_set_lock(&io_lock);
 
-        a++;
+            const int value = i;
+            queue.push(value);
+            std::cout << "Put " << value << " into queue" << std::endl;
 
-        omp_unset_lock(&lock1);
-        omp_unset_lock(&lock2);
+            omp_unset_lock(&queue_lock);
+            omp_unset_lock(&io_lock);
+        }
     }
 
     #pragma omp section 
     {
-        omp_set_lock(&lock2);
-        omp_set_lock(&lock1);
+        bool working = true;
+        while (working) {
+            omp_set_lock(&io_lock);
+            omp_set_lock(&queue_lock);
 
-        a++;
+            if (!queue.empty()) {
+                const int value = queue.front();
+                queue.pop();
+                std::cout << "Get " << value << " from queue" << std::endl;
+                working = (value < 9);
+            }
 
-        omp_unset_lock(&lock1);
-        omp_unset_lock(&lock2);
+            omp_unset_lock(&queue_lock);
+            omp_unset_lock(&io_lock);
+        }
     }
 }
 
-    omp_destroy_lock(&lock1);
-    omp_destroy_lock(&lock2);
-
-	printf("a = %d\n", a);
+    omp_destroy_lock(&queue_lock);
+    omp_destroy_lock(&io_lock);
 
     return 0;
 }
