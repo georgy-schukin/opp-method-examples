@@ -36,3 +36,7 @@
 /openmp/oracle-deadlock/build/
 /openmp/oracle-datarace-sv/build/
 /openmp/oracle-datarace-sv/dist/
+/openmp/oracle-cache-misses/build/
+/openmp/oracle-cache-misses/dist/
+/openmp/oracle-jacobi/build/
+/openmp/oracle-jacobi/dist/
