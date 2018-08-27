@@ -40,3 +40,5 @@
 /openmp/oracle-cache-misses/dist/
 /openmp/oracle-jacobi/build/
 /openmp/oracle-jacobi/dist/
+/openmp/oracle-puasson/build/
+/openmp/oracle-puasson/dist/
